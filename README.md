@@ -12,7 +12,7 @@ on join you face config menu (its empty), you have total of 6 commands (currentl
 - **r** - record how much time you lost on single session and display it after game (set to 0, any value expect 0 will count as enabled)
 - **m** - change range of numbers (currently from 0 to your number)
 - **l** - set maximum lives for current session (default is 0, meaning you will lose instaly if not changed)
-- **e** - set value that will make your seesion automaticly end if you reach score that you typed (currently works only for scoreV1)
+- **e** - set value that will make your seesion automaticly end if you reach score that you typed
 - **2** - enable scoreV2 (you will get combo (max of right typed numbers in row); score will be counted based on speed of your typing) (set to 0, any value expect 0 will count as enabled)
 
 small notice, you can chain commands, so you can do `l1r1` to set lives to 1 and enable time recording
