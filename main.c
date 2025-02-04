@@ -99,8 +99,8 @@ int main() {
 	}
       }
       else if (score_v3 != 0) {
-	if (2125 - (end - begin) > 0) {
-	  score += (2125 - (int)(end - begin)) * ((combo / 100) + 1) * ((num / 100) + 1);
+	if (2000 - (end - begin) > 0) {
+	  score += (2000 - (int)(end - begin)) * ((combo / 10) + 1) * ((num / 100) + 1);
 	  combo++;
 	  printf(" best >:3");
 	}
