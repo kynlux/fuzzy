@@ -25,7 +25,7 @@ you have 1.65s of remebering number, after it its disapears and you must type it
 
 i will try do best things to game to make it funny
 
-## Roadmap
+## Roadmap to v1.0.0
 - [ ] ScoreV3 (better version of scoreV2)
 - [ ] Custom timing for ScoreV2/V3 rewards
 - [ ] Make unique challenges
