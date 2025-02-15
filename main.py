@@ -81,6 +81,7 @@ class Game:
             self.current_chart["difficulty"] = chart["difficulty"]
             self.current_chart["score"] = 0
             self.current_chart["combo"] = 0
+            user.lives = 3
             
             for pattern in chart["patterns"]:
                 user.clear_console()
@@ -108,16 +109,16 @@ class Game:
             
             if user.lives > 0:
                 print("you won!")
+                if self.current_chart["maxcombo"] < self.current_chart["combo"]:    
+                    self.current_chart["maxcombo"] = self.current_chart["combo"]
+                self.current_chart["time"] = end_time - start_time
+                
+                print("time elapsed: {:.2f}s\n".format(self.current_chart["time"]) +
+                    "score earned: {:.2f}\n".format(self.current_chart["score"]) + 
+                    "max / last combo: {}/{}\n".format(self.current_chart["maxcombo"], self.current_chart["combo"]))
+                user.set_best(chart, self.current_chart["time"], self.current_chart["wpm"], self.current_chart["score"]) 
             else:
                 print("you lose!")
-            if self.current_chart["maxcombo"] < self.current_chart["combo"]:    
-                self.current_chart["maxcombo"] = self.current_chart["combo"]
-            self.current_chart["time"] = end_time - start_time
-            
-            print("time elapsed: {:.2f}s\n".format(self.current_chart["time"]) +
-                  "score earned: {:.2f}\n".format(self.current_chart["score"]) + 
-                  "max / last combo: {}/{}\n".format(self.current_chart["maxcombo"], self.current_chart["combo"]))
-            user.set_best(chart, self.current_chart["time"], self.current_chart["wpm"], self.current_chart["score"]) 
             
             input("press Enter to continue")
             user.display_menu(self, data)
@@ -128,6 +129,7 @@ class Game:
             self.current_chart["score"] = -1
             self.current_chart["combo"] = -1
             self.current_chart["maxcombo"] = -1    
+            user.lives = 3
             
 def main():
     data = Data_Handler()
