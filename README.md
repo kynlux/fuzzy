@@ -16,3 +16,6 @@ while in map, you will see a pattern (string) that you need to type, if you type
 you got 3 lives in base, in future updates i return config menu
 
 i will try do best things to game to make it funny
+
+### Map creation
+for whose who willing to create own maps, you can check EXAMPLE_OF_CHART.txt in base_maps.zip to learn how to create maps
