@@ -9,6 +9,7 @@ on join you face a map select menu, you can use different commands to manipulate
 - **prev** - select previous map
 - **next** - select next map
 - **play** - play map
+- **leave** - exit from game
 
 ### Map playthrough
 while in map, you will see a pattern (string) that you need to type, if you type it correctly you will get additional score and combo
