@@ -13,18 +13,24 @@ class Data_Handler:
                 if isfile("./charts/" + chart):
                     chart_file = open("./charts/" + chart)
                     
-                    chart_info = {"name": "", "difficulty": -1, "patterns": []}
+                    chart_info = {"name": "", "difficulty": -1, "creator": "no name", "patterns": []}
                     info_collected = 0
                     for chart_line in chart_file:
-                        if info_collected != 2:
+                        if info_collected != 3:
                             info_line = chart_line.strip().split(" : ")
                             if info_line:
-                                if info_line[0] == "display":
+                                if info_line[1] != "__BASE__":
+                                    if info_line[0] == "display":
+                                        info_collected += 1
+                                        chart_info["name"] = info_line[1]
+                                    elif info_line[0] == "diff":
+                                        info_collected += 1
+                                        chart_info["difficulty"] = info_line[1]
+                                    elif info_line[0] == "creator":
+                                        info_collected += 1
+                                        chart_info["creator"] = info_line[1]
+                                else:
                                     info_collected += 1
-                                    chart_info["name"] = info_line[1]
-                                elif info_line[0] == "diff":
-                                    info_collected += 1
-                                    chart_info["difficulty"] = info_line[1]
                         else:
                             if chart_line.strip() != "":
                                 chart_info["patterns"].append(chart_line.strip())
@@ -73,7 +79,7 @@ class User:
         while not game_started:
             self.clear_console()
             if data.charts != []:
-                print(" - {} ({})".format(data.charts[self.menu_ptr]["name"], data.charts[self.menu_ptr]["difficulty"]))
+                print(" - {} ({})\n    made by {}".format(data.charts[self.menu_ptr]["name"], data.charts[self.menu_ptr]["difficulty"], data.charts[self.menu_ptr]["creator"]))
                 menu_action = input(">> ")
                 if menu_action.lower() == "prev":
                     if len(data.charts) - 1 > self.menu_ptr:
