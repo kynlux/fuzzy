@@ -18,7 +18,7 @@ class Data_Handler:
                     for chart_line in chart_file:
                         if info_collected != 3:
                             info_line = chart_line.strip().split(" : ")
-                            if info_line:
+                            if len(info_line) > 1:
                                 if info_line[1] != "__BASE__":
                                     if info_line[0] == "display":
                                         info_collected += 1
@@ -53,8 +53,8 @@ class User:
         self.menu_ptr = 0
         self.best = {"name": "", 
                      "time": -1, 
-                     "wpm": -1, 
-                     "score": -1}
+                     "score": -1,
+                     "maxcombo": -1}
 
     def clear_console(self):
         system("cls")
@@ -65,21 +65,63 @@ class User:
         input("(press Enter to exit)\n")
         exit()
 
-    def set_best(self, chart, time, wpm, score):
-        if time == -1 or wpm == -1:
-            return
-        else:
-            self.best["name"] = chart["name"]
-            self.best["time"] = time
-            self.best["wpm"] = wpm
-            self.best["score"] = score
+    def set_best(self, chart, time):
+        self.best["name"] = chart["name"]
+        self.best["time"] = time
+        self.best["score"] = chart["score"]
+        self.best["maxcombo"] = chart["maxcombo"]
+        
+        change_time = False
+        change_score = False
+        change_maxcombo = False
+        
+        if isdir("./bests"):
+            if not isfile("./bests/" + chart["name"] + ".txt"):
+                create_file = open("./bests/" + chart["name"] + ".txt", "w")
+                create_file.close()
+                
+            best_file = open("./bests/" + chart["name"] + ".txt")
+            for best_line in best_file:
+                info_line = best_line.strip().split(" : ")
+                if info_line[0] == "time":
+                    self.best["time"] = min(float(self.best["time"]), float(info_line[1]))
+                elif info_line[0] == "score":
+                    self.best["score"] = max(float(self.best["score"]), float(info_line[1]))
+                elif info_line[0] == "maxcombo":
+                    self.best["maxcombo"] = max(float(self.best["maxcombo"]), float(info_line[1]))
+            best_file.close()
             
+            with open("./bests/" + chart["name"] + ".txt", "w") as f:
+                f.write("time : {:.2f}\nscore : {}\nmaxcombo : {}".format(self.best["time"], int(self.best["score"]), int(self.best["maxcombo"])))
+                f.close()
+        else:
+            mkdir("./bests")
+            
+            if not isfile("./bests/" + chart["name"] + ".txt"):
+                create_file = open("./bests/" + chart["name"] + ".txt", "w")
+                create_file.close()
+                
+            best_file = open("./bests/" + chart["name"] + ".txt")
+            for best_line in best_file:
+                info_line = best_line.strip().split(" : ")
+                if info_line[0] == "time":
+                    self.best["time"] = min(float(self.best["time"]), float(info_line[1]))
+                elif info_line[0] == "score":
+                    self.best["score"] = max(float(self.best["score"]), float(info_line[1]))
+                elif info_line[0] == "maxcombo":
+                    self.best["maxcombo"] = max(float(self.best["maxcombo"]), float(info_line[1]))
+            best_file.close()
+            
+            with open("./bests/" + chart["name"] + ".txt", "w") as f:
+                f.write("time : {:.2f}\nscore : {}\nmaxcombo : {}".format(self.best["time"], int(self.best["score"]), int(self.best["maxcombo"])))
+                f.close()
+        
     def display_menu(self, game, data):
         game_started = False
         while not game_started:
             self.clear_console()
             if data.charts != []:
-                print(" - {} ({})\n    made by {}".format(data.charts[self.menu_ptr]["name"], data.charts[self.menu_ptr]["difficulty"], data.charts[self.menu_ptr]["creator"]))
+                print(" - {} [ {} ]\n    made by {}".format(data.charts[self.menu_ptr]["name"], data.charts[self.menu_ptr]["difficulty"], data.charts[self.menu_ptr]["creator"]))
                 menu_action = input(">> ")
                 if menu_action.lower() == "prev":
                     if len(data.charts) - 1 > self.menu_ptr:
@@ -100,7 +142,6 @@ class Game:
         self.current_chart = {"name": '',
                               "difficulty": -1, 
                               "score": -1, 
-                              "wpm": -1,
                               "combo": -1,
                               "maxcombo": -1}
 
@@ -113,6 +154,7 @@ class Game:
             self.current_chart["difficulty"] = chart["difficulty"]
             self.current_chart["score"] = 0
             self.current_chart["combo"] = 0
+            self.current_chart["maxcombo"] = 0  
             user.lives = 3
             
             for pattern in chart["patterns"]:
@@ -126,8 +168,11 @@ class Game:
                         user.lives -= 1
                     else:
                         if (1000 * len(pattern.split(' ')) * (len(pattern) / 2)) - ((input_end - input_start) * 1000) > 0:
-                            self.current_chart["score"] += (1000 * len(pattern.split(' ')) * (len(pattern) / 2)) - ((input_end - input_start) * 1000)
+                            self.current_chart["score"] += ((1000 * len(pattern.split(' ')) * (len(pattern) / 2)) - ((input_end - input_start) * 1000)) * (self.current_chart["combo"] / 2)
                             self.current_chart["combo"] += 1
+                            if user.lives < 3:
+                                if self.current_chart["combo"] > 15:
+                                    user.lives += 1
                         else:
                             user.lives -= 1
                             if self.current_chart["maxcombo"] < self.current_chart["combo"]:    
@@ -148,7 +193,7 @@ class Game:
                 print("time elapsed: {:.2f}s\n".format(self.current_chart["time"]) +
                     "score earned: {:.2f}\n".format(self.current_chart["score"]) + 
                     "max / last combo: {}/{}\n".format(self.current_chart["maxcombo"], self.current_chart["combo"]))
-                user.set_best(chart, self.current_chart["time"], self.current_chart["wpm"], self.current_chart["score"]) 
+                user.set_best(self.current_chart, self.current_chart["time"]) 
             else:
                 print("you lose!")
             
@@ -157,7 +202,6 @@ class Game:
             
             self.current_chart["name"] = ""
             self.current_chart["difficulty"] = -1
-            self.current_chart["wpm"] = -1
             self.current_chart["score"] = -1
             self.current_chart["combo"] = -1
             self.current_chart["maxcombo"] = -1    
