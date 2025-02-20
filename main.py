@@ -150,7 +150,7 @@ class Game:
                               "score": -1, 
                               "combo": -1,
                               "maxcombo": -1}
-        self.version = "v1.2.1"
+        self.version = "v1.2.2-imsorry"
 
     def start_chart(self, name, data, user):
         chart = data.get_chart(name)
